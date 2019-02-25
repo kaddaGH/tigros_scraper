@@ -2,21 +2,24 @@ data = JSON.parse(content)
 
 data = data['data']
 
-promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") + " " + data['warehousePromo']['view']['body'].gsub(/<[^<>]+>/, "") rescue ""
+promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") + " , " + data['warehousePromo']['view']['body'].gsub(/<[^<>]+>/, "") rescue ""
 brand = data['shortDescr']
-brand ||= [
-    'Carnation', "COCA COLA","FANTA","LEMONSODA","ORANSODA","PEPSI","SEVEN UP","SPRITE"
-].find {|brand_name| title.downcase.include?(brand_name.downcase)} || ''
+puts(brand)
+if brand.length<1
+  brand = [
+      'Carnation', "COCA COLA","FANTA","LEMONSODA","ORANSODA","PEPSI","SEVEN UP","SPRITE"
+  ].find {|brand_name| data['name'].downcase.include?(brand_name.downcase)} || ''
+
+
+end
 
 size_info = data['description']
 [
-    /([A-Z]+?)\.([\d]+)/,
-    /([A-Z]+?)\s+([\d]+)/,
+    /([A-Z]+?)[\.\s]+(\d+)/,
 
 ].find {|regexp| size_info =~ regexp}
 uom = $1
 item_size = $2
-
 
 in_pack = size_info[/(?<=[xX])([\s\d]+?)/]
 if in_pack.nil?

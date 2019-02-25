@@ -27,7 +27,7 @@ if current_page == 1 and number_of_pages > 1
 
 
   end
-elsif current_page == 0 and number_of_pages == 1
+elsif current_page == 1 and number_of_pages == 1
   nbr_products_pg1 = products.length
 else
   nbr_products_pg1 = page['vars']['nbr_products_pg1']
@@ -35,7 +35,7 @@ end
 
 
 products.each_with_index do |product, i|
-  
+
   pages << {
       page_type: 'product_details',
       method: 'GET',
