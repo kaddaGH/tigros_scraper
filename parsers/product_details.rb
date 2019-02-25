@@ -2,13 +2,22 @@ data = JSON.parse(content)
 
 data=data['data']
 
-promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") rescue  ""
+promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") +" "+data['warehousePromo']['view']['body'].gsub(/<[^<>]+>/, "")   rescue  ""
+
+
 
 size_info = data['description']
-item_size = size_info[/(?<=\.)[^x]+?/]
+item_size = ""
+uom = ""
+[
+    /([A-Z]+?)\.([\d,]+?)/,
+    /([A-Z]+?)\s+([\d,]+?)/,
 
-uom=size_info[/.+?(?=\.)/]
-in_pack = size_info[/(?<=x).+?\Z/]
+  ].find {|regexp| size_info=~ regexp}
+  item_size = $1
+  uom = $2
+
+in_pack = size_info[/(?<=[xX])([\s\d]+?)/]
 if in_pack.nil?
   in_pack='1'
 end
@@ -39,7 +48,7 @@ product_details = {
     # - - - - - - - - - - -
     SCRAPE_URL_NBR_PROD_PG1: page['vars']['nbr_products_pg1'],
     # - - - - - - - - - - -
-    PRODUCT_BRAND: data['vendor']['name'],
+    PRODUCT_BRAND: data['shortDescr'],
     PRODUCT_RANK: page['vars']['product_rank'],
     PRODUCT_PAGE: page['vars']['page'],
     PRODUCT_ID: data['productId'],
