@@ -1,39 +1,40 @@
 data = JSON.parse(content)
 
-data=data['data']
+data = data['data']
 
-promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") +" "+data['warehousePromo']['view']['body'].gsub(/<[^<>]+>/, "")   rescue  ""
-
-
+promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") + " " + data['warehousePromo']['view']['body'].gsub(/<[^<>]+>/, "") rescue ""
+brand = data['shortDescr']
+brand ||= [
+    'Carnation', "COCA COLA","FANTA","LEMONSODA","ORANSODA","PEPSI","SEVEN UP","SPRITE"
+].find {|brand_name| title.downcase.include?(brand_name.downcase)} || ''
 
 size_info = data['description']
-item_size = ""
-uom = ""
 [
-    /([A-Z]+?)\.([\d,]+?)/,
-    /([A-Z]+?)\s+([\d,]+?)/,
+    /([A-Z]+?)\.([\d]+)/,
+    /([A-Z]+?)\s+([\d]+)/,
 
-  ].find {|regexp| size_info=~ regexp}
-  item_size = $1
-  uom = $2
+].find {|regexp| size_info =~ regexp}
+uom = $1
+item_size = $2
+
 
 in_pack = size_info[/(?<=[xX])([\s\d]+?)/]
 if in_pack.nil?
-  in_pack='1'
+  in_pack = '1'
 end
 
 description = ""
 
 data["metaData"]["product_description"].each do |value|
 
-unless value[0] == 'ingredients'
+  unless value[0] == 'ingredients'
 
-  description = description+value[1]+" . "
+    description = description + value[1] + " . "
+
+  end
 
 end
-
-end
-description = description.gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/,' ').gsub(/,/,' ').strip
+description = description.gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/, ' ').gsub(/,/, ' ').strip
 
 product_details = {
     # - - - - - - - - - - -
@@ -48,12 +49,12 @@ product_details = {
     # - - - - - - - - - - -
     SCRAPE_URL_NBR_PROD_PG1: page['vars']['nbr_products_pg1'],
     # - - - - - - - - - - -
-    PRODUCT_BRAND: data['shortDescr'],
+    PRODUCT_BRAND: brand,
     PRODUCT_RANK: page['vars']['product_rank'],
     PRODUCT_PAGE: page['vars']['page'],
     PRODUCT_ID: data['productId'],
     PRODUCT_NAME: data['name'],
-    EAN:"",
+    EAN: "",
     PRODUCT_DESCRIPTION: description,
     PRODUCT_MAIN_IMAGE_URL: data['media'][0]['medium'],
     PRODUCT_ITEM_SIZE: item_size,
@@ -62,10 +63,10 @@ product_details = {
     SALES_PRICE: data['priceDisplay'],
     IS_AVAILABLE: "1",
     PROMOTION_TEXT: promotion,
-    EXTRACTED_ON:Time.now.to_s
+    EXTRACTED_ON: Time.now.to_s
 }
 
 product_details['_collection'] = 'products'
 
-outputs<<product_details
+outputs << product_details
 
