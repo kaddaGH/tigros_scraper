@@ -5,9 +5,9 @@ data = data['data']
 promotion = data['warehousePromo']['view']['header'].gsub(/<[^<>]+>/, "") + " , " + data['warehousePromo']['view']['body'].gsub(/<[^<>]+>/, "") rescue ""
 brand = data['shortDescr']
 puts(brand)
-if brand.length<1
+if brand.length < 1
   brand = [
-      'Carnation', "COCA COLA","FANTA","LEMONSODA","ORANSODA","PEPSI","SEVEN UP","SPRITE"
+      'Carnation', "COCA COLA", "FANTA", "LEMONSODA", "ORANSODA", "PEPSI", "SEVEN UP", "SPRITE"
   ].find {|brand_name| data['name'].downcase.include?(brand_name.downcase)} || ''
 
 
@@ -26,9 +26,31 @@ if in_pack.nil?
   in_pack = '1'
 end
 
+description = ""
 
-description = data["metaData"]["product_description"]["features"].gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/, ' ').gsub(/,/, ' ').strip rescue  ""
+data["metaData"]["product_description"].each do |value|
 
+  if value[0] == 'features'
+
+    description = description + "CARATTERISTICHE DI PRODOTTO : "+value[1]
+  elsif value[0] == 'sale_description'
+
+    description = description + ""+value[1]
+
+  elsif value[0] == 'storage'
+
+    description = description + " CONSERVAZIONE : "+value[1]
+  elsif value[0] == 'ingredients'
+   #
+  elsif value[0] == 'nutritional_values'
+  #
+  else
+        description = description +" "+value[1]
+
+  end
+
+end
+description = description.gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/, ' ').gsub(/,/, ' ').strip
 
 product_details = {
     # - - - - - - - - - - -
