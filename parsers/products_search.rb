@@ -35,8 +35,7 @@ end
 
 
 products.each_with_index do |product, i|
-
-
+  
   pages << {
       page_type: 'product_details',
       method: 'GET',
