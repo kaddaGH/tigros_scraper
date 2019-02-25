@@ -28,15 +28,9 @@ end
 
 description = ""
 
-data["metaData"]["product_description"].each do |value|
+description = data["metaData"]["product_description"]["features"] rescue  ""
 
-  unless value[0] == 'ingredients'
 
-    description = description + value[1] + " . "
-
-  end
-
-end
 description = description.gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/, ' ').gsub(/,/, ' ').strip
 
 product_details = {
