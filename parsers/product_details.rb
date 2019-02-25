@@ -26,12 +26,9 @@ if in_pack.nil?
   in_pack = '1'
 end
 
-description = ""
 
-description = data["metaData"]["product_description"]["features"] rescue  ""
+description = data["metaData"]["product_description"]["features"].gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/, ' ').gsub(/,/, ' ').strip rescue  ""
 
-
-description = description.gsub(/<[^<>]+>/, "").gsub(/[\n\r\s]+/, ' ').gsub(/,/, ' ').strip
 
 product_details = {
     # - - - - - - - - - - -
